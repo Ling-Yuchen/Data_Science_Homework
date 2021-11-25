@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <script src="js/jquery/2.0.0/jquery.min.js"></script>
+    <link href="css/bootstrap/3.3.6/bootstrap.min.css" rel="stylesheet">
+    <script src="js/bootstrap/3.3.6/bootstrap.min.js"></script>
+</head>
+
+<style>
+    p.InfoTitle {
+        font-size: 15px;
+        font-weight: bold;
+        margin: 0px 10px 10px 0px;
+        /* border: 2px solid #000; */
+        width: 60px;
+        display: inline-block;
+    }
+    input.info {
+        width: 400px;
+        display: inline-block;
+    }
+    div.textareaDiv {
+        padding-left: 480px;
+        margin: 25px 0px;
+    }
+    textarea.caseText {
+        margin: 10px;
+        height: 200px;
+        width: 500px;
+    }
+    div.infoDiv {
+        padding-left: 500px;
+        /* border: 2px solid #000; */
+    }
+    div.saveButton {
+        margin-top: 25px;
+        margin-bottom: 5px;
+        padding-left: 645px;
+    }
+    div.uploadButton {
+        margin-top: 25px;
+        margin-bottom: 5px;
+        padding-left: 680px;
+    }
+</style>
+
+<script>
+    function getCaseText() {
+        var text = $("textarea.caseText").val();
+        alert(text);
+        return text;
+    }
+
+    function generateData() {
+        var party = document.getElementById("party").value;
+        var gender = document.getElementById("gender").value;
+        var ethnic = document.getElementById("ethinic").value;
+        var birthplace = document.getElementById("birthplace").value;
+        var cause = document.getElementById("cause").value;
+        var courts = document.getElementById("courts").value;
+        return {
+                "当事人" : party,
+                "性别" : gender,
+                "民族" : ethnic,
+                "出生地" : birthplace,
+                "案由" : cause,
+                "相关法院" : courts
+            };
+    }
+
+    $(function() {
+        $("input#saveLabel").click(function() {
+            const data = generateData();
+            var content = JSON.stringify(data);
+            const blob = new Blob([content], { type: "text/plain;charset=utf-8" });
+            const a = document.createElement("a");
+            a.href = URL.createObjectURL(blob)
+            a.download = "案件信息提取.json";
+            a.click();
+            URL.revokeObjectURL(a.href);
+            a.remove();
+        });
+        $("input#saveText").click(function() {
+            const data = getCaseText();
+            const blob = new Blob([data], { type: "text/plain;charset=utf-8" });
+            const a = document.createElement("a");
+            a.href = URL.createObjectURL(blob)
+            a.download = "案件信息提取.txt";
+            a.click();
+            URL.revokeObjectURL(a.href);
+            a.remove();
+        });
+    });
+</script>
+
+<div class="uploadButton">
+    <input class="btn btn-primary" type="button" value="上传案例文件"><br>
+</div>
+
+<div class="textareaDiv"><textarea class="caseText form-control" placeholder="请输入案件信息..."></textarea></div>
+<div class="infoDiv">
+    <p class="InfoTitle">当事人</p><input class="info form-control" id="party" type="text"><br>
+    <p class="InfoTitle">性别</p><input class="info form-control" id="gender" type="text"><br>
+    <p class="InfoTitle">民族</p><input class="info form-control" id="ethinic" type="text"><br>
+    <p class="InfoTitle">出生地</p><input class="info form-control" id="birthplace" type="text"><br>
+    <p class="InfoTitle">案由</p><input class="info form-control" id="cause"type="text"><br>
+    <p class="InfoTitle">相关法院</p><input class="info form-control" id="courts" type="text"><br>
+</div>
+<div class="saveButton">
+    <input class="btn btn-primary" id="saveText" type="button" value="保存案件">
+    <input class="btn btn-primary" id="saveLabel" type="button" value="保存标注">
+</div>
