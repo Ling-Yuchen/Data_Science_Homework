@@ -47,9 +47,7 @@
 
 <script>
     function getCaseText() {
-        var text = $("textarea.caseText").val();
-        alert(text);
-        return text;
+        return $("textarea.caseText").val();
     }
 
     function generateData() {
@@ -70,6 +68,7 @@
     }
 
     $(function() {
+        // 点击按钮保存提取的案件信息.json文件到本地
         $("input#saveLabel").click(function() {
             const data = generateData();
             var content = JSON.stringify(data);
@@ -81,8 +80,14 @@
             URL.revokeObjectURL(a.href);
             a.remove();
         });
+
+        // 点击按钮保存输入的案件信息.txt文件到本地
         $("input#saveText").click(function() {
             const data = getCaseText();
+            if (data == "") {
+                alert("没有已输入的案件信息！");
+                return;
+            }
             const blob = new Blob([data], { type: "text/plain;charset=utf-8" });
             const a = document.createElement("a");
             a.href = URL.createObjectURL(blob)
@@ -98,7 +103,10 @@
     <input class="btn btn-primary" type="button" value="上传案例文件"><br>
 </div>
 
-<div class="textareaDiv"><textarea class="caseText form-control" placeholder="请输入案件信息..."></textarea></div>
+<div class="textareaDiv">
+    <textarea class="caseText form-control" placeholder="请输入案件信息..."></textarea>
+</div>
+
 <div class="infoDiv">
     <p class="InfoTitle">当事人</p><input class="info form-control" id="party" type="text"><br>
     <p class="InfoTitle">性别</p><input class="info form-control" id="gender" type="text"><br>
@@ -107,6 +115,7 @@
     <p class="InfoTitle">案由</p><input class="info form-control" id="cause"type="text"><br>
     <p class="InfoTitle">相关法院</p><input class="info form-control" id="courts" type="text"><br>
 </div>
+
 <div class="saveButton">
     <input class="btn btn-primary" id="saveText" type="button" value="保存案件">
     <input class="btn btn-primary" id="saveLabel" type="button" value="保存标注">
