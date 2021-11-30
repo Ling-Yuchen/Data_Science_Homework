@@ -100,7 +100,12 @@
 </script>
 
 <div class="uploadButton">
-    <input class="btn btn-primary" type="button" value="上传案例文件"><br>
+    <meta  http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <form action="uploadPhoto" method="post" enctype="multipart/form-data">
+    <p class="InfoTitle">上传案例</p>
+    <input  type="file" name="image" accept="image/*" /> <br>
+    <input class="btn btn-primary" type="submit" value="保存已获取案例文件">
+</form>
 </div>
 
 <div class="textareaDiv">

@@ -1,0 +1,51 @@
+var express = require('express');
+var path = require('path')
+var fs = require("fs");
+var multer  = require('multer');
+ 
+var app = express();
+//指定静态文件位置
+app.use(express.static(path.join(__dirname, 'public')))
+//上传之后放在工作目录下的 tmp 目录下。 上传的时候上传控件的name 必须是  image
+app.use(multer({ dest: path.join(__dirname, 'tmp') }).array('image'));
+ 
+//获取后缀名
+function getExtName(fileName){
+    var index1=fileName.lastIndexOf(".");
+    var index2=fileName.length;
+    var extName=fileName.substring(index1+1,index2);
+    return extName;
+}
+ 
+app.post('/uploadPhoto', function (req, res) {
+   //获取上传文件的后缀名
+   var extName = getExtName(req.files[0].originalname);
+    
+   //随机数
+   var rundomNumber = Math.ceil(Math.random()*10000000);
+   //以随机数作为文件名
+   var randomFileName =  rundomNumber + "."+extName;
+
+   //创建文件目录
+   var fileFolder = __dirname + "/public/file/";
+//    if(!fs.exists(fileFolder))
+//        fs.mkdir(fileFolder);
+    
+   //文件路径
+   var fileFile = __dirname + "/public/file/" + randomFileName;
+    
+   //上传临时文件的路径
+   var uploadedTempFilePath = req.files[0].path;
+    
+   //读取临时文件
+   fs.readFile( uploadedTempFilePath, function (err, data) {
+       //读取成功之后，复制到文件路径
+        fs.writeFile(fileFile, data, function (err) {
+            //写成功之后，返回 file元素显示上传之后的图片
+              res.writeHead(200, {'Content-Type': 'text/html'});
+              res.end("Save successfully!");
+       });
+   });
+})
+  
+var server = app.listen(8088);
