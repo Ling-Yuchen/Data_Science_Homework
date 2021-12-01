@@ -129,7 +129,9 @@ html + css (bootstrap) + javascript (jquery)
 
 官方下载安装：https://nodejs.org/en/download/
 
-###### @胡睿 有空写一下
+node.js 简易教程：https://how2j.cn/k/nodejs/nodejs-start/1760.html
+
+
 
 
 

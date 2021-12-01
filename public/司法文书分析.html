@@ -7,41 +7,132 @@
     <script src="js/bootstrap/3.3.6/bootstrap.min.js"></script>
 </head>
 
+<script type="text/javascript">
+
+    // 打开一个WebSocket:
+    var ws = new WebSocket('ws://localhost:3000');
+    
+    //open event
+    ws.onopen = function() {
+        console.log("open websocket...");
+    };
+    
+    //close event
+    ws.onclose = function() {
+        console.log("close websocket...");
+    };
+    
+    // 响应onmessage事件:
+    ws.onmessage = function(msg) { 
+        //这里可以处理接收到服务器的数据
+        if (msg.data.startsWith("@show")) {
+            $("textarea.caseText").val(msg.data.substring(5));
+        }
+        else if (msg.data.startsWith("@nlp")) {
+            var data = new String(msg.data.substring(4)).split('#'); 
+            var tip = ["  名词","","  动词","","  姓名","","  时间"];
+
+            var optionbox = document.getElementsByClassName("optionbox");
+            for (var k = 0; k < optionbox.length; ++k) {
+                var box = optionbox[k];
+                for (var i = 0; i < box.children.length; ++i) {
+                    if (box.children[i].nodeName == "BR") continue;
+                    var tipSpan = document.createElement("span");
+                    tipSpan.appendChild(document.createTextNode(tip[i]));
+                    tipSpan.setAttribute("class", "glyphicon glyphicon-list posTip");
+
+                    var cancelFloatDiv = document.createElement("div");
+                    cancelFloatDiv.setAttribute("style", "clear: both;");
+
+                    box.children[i].appendChild(tipSpan);
+                    box.children[i].appendChild(cancelFloatDiv);
+
+                    var options = data[i/2].split(',');
+                    for (var j = 0; j < options.length-1; ++j) {
+                        var label = document.createElement("label");
+                        label.setAttribute("class", "btn btn-default");
+
+                        var checkbox = document.createElement("input");
+                        checkbox.setAttribute("type", "checkbox");
+
+                        label.appendChild(checkbox);
+                        label.appendChild(document.createTextNode(" " + options[j]));
+                        box.children[i].appendChild(label);
+                    }
+                }
+            }
+        }
+        else {
+            alert("Cannot identify the message:" + msg.data.substring(0, 10) + "...");
+        }
+    }; 
+
+    $(function() {
+        $(".uploadDiv input.nlpButton").click(function() {
+            ws.send($("textarea.caseText").val());
+        });
+        $(".uploadDiv input.showText").click(function() {
+            ws.send("@show");
+        });
+    });
+</script>
+
 <style>
-    p.InfoTitle {
-        font-size: 15px;
-        font-weight: bold;
-        margin: 0px 10px 10px 0px;
-        /* border: 2px solid #000; */
-        width: 60px;
-        display: inline-block;
-    }
-    input.info {
-        width: 400px;
-        display: inline-block;
-    }
     div.textareaDiv {
-        padding-left: 480px;
+        padding-left: 220px;
         margin: 25px 0px;
     }
     textarea.caseText {
         margin: 10px;
-        height: 200px;
-        width: 500px;
+        padding: 15px 25px;
+        height: 500px;
+        width: 1000px;
     }
     div.infoDiv {
-        padding-left: 500px;
-        /* border: 2px solid #000; */
+        margin-left: 230px;
+        margin-bottom: 25px;
+        width: 1000px;
     }
     div.saveButton {
         margin-top: 25px;
-        margin-bottom: 5px;
-        padding-left: 645px;
+        margin-bottom: 20px;
+        padding-left: 615px;
     }
-    div.uploadButton {
+    div.saveButton input#saveText {
+        margin-right: 30px;
+    }
+    div.uploadDiv {
+        width: 980px;
         margin-top: 25px;
         margin-bottom: 5px;
-        padding-left: 680px;
+        margin-left: 240px;
+        /* border: 2px solid #000; */
+    }
+    div.uploadDiv form {
+        float: left;
+    }
+    div.uploadDiv input.nlpButton {
+        margin-left: 15px;
+    }
+    a {
+        cursor: pointer;
+        font-weight: bold;
+        width: 100px;
+        text-align: center;
+    }
+    div.options {
+        padding: 5px 15px;
+    }
+    div.options label {
+        width: 240px;
+        text-align: center;
+        margin-bottom: 5px;
+        border-radius: 10px;
+    }
+    span.posTip {
+        float: left;
+        margin-bottom: 15px;
+        margin-top: 20px;
     }
 </style>
 
@@ -51,12 +142,65 @@
     }
 
     function generateData() {
-        var party = document.getElementById("party").value;
-        var gender = document.getElementById("gender").value;
-        var ethnic = document.getElementById("ethinic").value;
-        var birthplace = document.getElementById("birthplace").value;
-        var cause = document.getElementById("cause").value;
-        var courts = document.getElementById("courts").value;
+        var party = "";
+        var gender = "";
+        var ethnic = "";
+        var birthplace = "";
+        var cause = "";
+        var courts = "";
+        $("div#party div.options").each(function() {
+            $(this).find("label input").each(function() {
+                if ($(this).prop("checked")) {
+                    party += $(this).parent().text().trim() + ",";
+                }
+            });
+        });
+        $("div#gender div.options").each(function() {
+            $(this).find("label input").each(function() {
+                if ($(this).prop("checked")) {
+                    gender += $(this).parent().text().trim() + ",";
+                }
+            });
+        });
+        $("div#ethnic div.options").each(function() {
+            $(this).find("label input").each(function() {
+                if ($(this).prop("checked")) {
+                    ethnic += $(this).parent().text().trim() + ",";
+                }
+            });
+        });
+        $("div#birthplace div.options").each(function() {
+            $(this).find("label input").each(function() {
+                if ($(this).prop("checked")) {
+                    birthplace += $(this).parent().text().trim() + ",";
+                }
+            });
+        });
+        $("div#cause div.options").each(function() {
+            $(this).find("label input").each(function() {
+                if ($(this).prop("checked")) {
+                    cause += $(this).parent().text().trim() + ",";
+                }
+            });
+        });
+        $("div#courts div.options").each(function() {
+            $(this).find("label input").each(function() {
+                if ($(this).prop("checked")) {
+                    courts += $(this).parent().text().trim() + ",";
+                }
+            });
+        });
+        // $("div.names label input").each(function() {
+        //     if ($(this).prop("checked")) {
+        //         party += $(this).parent().text().trim() + ",";
+        //     }
+        // });
+        party = party.substring(0, party.length-1);
+        gender = gender.substring(0, gender.length-1);
+        ethnic = ethnic.substring(0, ethnic.length-1);
+        birthplace = birthplace.substring(0, birthplace.length-1);
+        cause = cause.substring(0, cause.length-1);
+        courts = courts.substring(0, courts.length-1);
         return {
                 "当事人" : party,
                 "性别" : gender,
@@ -64,7 +208,7 @@
                 "出生地" : birthplace,
                 "案由" : cause,
                 "相关法院" : courts
-            };
+            }
     }
 
     $(function() {
@@ -99,29 +243,168 @@
     });
 </script>
 
-<div class="uploadButton">
-    <meta  http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <form action="uploadPhoto" method="post" enctype="multipart/form-data">
-    <p class="InfoTitle">上传案例</p>
-    <input  type="file" name="image" accept="image/*" /> <br>
-    <input class="btn btn-primary" type="submit" value="保存已获取案例文件">
-</form>
+<div class="uploadDiv">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <form action="uploadFile" method="post" enctype="multipart/form-data">
+        <input type="file" name="image" style="display: inline; width: 200px;">
+        <input class="btn btn-primary" type="submit" value="上  传">
+    </form>
+    <input class="btn btn-primary pull-right nlpButton" type="button" value="生 成 分 词 结 果">
+    <input class="btn btn-primary pull-right showText" type="button" value="显 示 文 件 内 容"><br>
+    
 </div>
 
 <div class="textareaDiv">
     <textarea class="caseText form-control" placeholder="请输入案件信息..."></textarea>
 </div>
 
+<script>
+    function updateLiState(n) {
+        $("li#p"+n).addClass("active");
+        for (var i = 1; i <= 6; ++i) {
+            if (i == n) continue;
+            var option = $("li#p"+i);
+            if (option.hasClass("active")) {
+                option.removeClass("active");
+                break;
+            }
+        }
+    }
+    function updateOptionState(id) {
+        $("div.optionbox").each(function() {
+            if($(this).attr("id") == id) {
+                $(this).css("display","block");
+            } else {
+                $(this).css("display","none");
+            }
+        });
+    }
+
+    $(function() {
+        $("li#p1").click(function() {
+            if (!$(this).hasClass("active")) {
+                updateLiState(1);
+                updateOptionState("party");
+            }
+        });
+        $("li#p2").click(function() {
+            if (!$(this).hasClass("active")) {
+                updateLiState(2);
+                updateOptionState("gender");
+            }
+        });
+        $("li#p3").click(function() {
+            if (!$(this).hasClass("active")) {
+                updateLiState(3);
+                updateOptionState("ethnic");
+            }
+        });
+        $("li#p4").click(function() {
+            if (!$(this).hasClass("active")) {
+                updateLiState(4);
+                updateOptionState("birthplace");
+            }
+        });
+        $("li#p5").click(function() {
+            if (!$(this).hasClass("active")) {
+                updateLiState(5);
+                updateOptionState("cause");
+            }
+        });
+        $("li#p6").click(function() {
+            if (!$(this).hasClass("active")) {
+                updateLiState(6);
+                updateOptionState("courts");
+            }
+        });
+    });
+</script>
+
 <div class="infoDiv">
-    <p class="InfoTitle">当事人</p><input class="info form-control" id="party" type="text"><br>
-    <p class="InfoTitle">性别</p><input class="info form-control" id="gender" type="text"><br>
-    <p class="InfoTitle">民族</p><input class="info form-control" id="ethinic" type="text"><br>
-    <p class="InfoTitle">出生地</p><input class="info form-control" id="birthplace" type="text"><br>
-    <p class="InfoTitle">案由</p><input class="info form-control" id="cause"type="text"><br>
-    <p class="InfoTitle">相关法院</p><input class="info form-control" id="courts" type="text"><br>
+    <ul class="nav nav-tabs">
+        <li id="p1" role="presentation" class="active"><a>当事人</a></li>
+        <li id="p2" role="presentation"><a>性别</a></li>
+        <li id="p3" role="presentation"><a>民族</a></li>
+        <li id="p4" role="presentation" ><a>出生地</a></li>
+        <li id="p5" role="presentation"><a>案由</a></li>
+        <li id="p6" role="presentation"><a>相关法院</a></li>
+    </ul>
+
+    <div class="optionbox" id="party" style="display: block;">
+
+        <div class="btn-group nouns options"></div><br>
+
+        <div class="btn-group verbs options"></div><br>
+
+        <div class="btn-group names options"></div><br>
+
+        <div class="btn-group times options"></div>
+
+    </div>
+
+    <div class="optionbox" id="gender" style="display: none;">
+
+        <div class="btn-group nouns options"></div><br>
+        
+        <div class="btn-group verbs options"></div><br> 
+
+        <div class="btn-group names options"></div><br> 
+
+        <div class="btn-group times options"></div>
+
+    </div>
+
+    <div class="optionbox" id="ethnic" style="display: none;">
+
+        <div class="btn-group nouns options"></div><br>
+        
+        <div class="btn-group verbs options"></div><br>   
+
+        <div class="btn-group names options"></div><br>
+
+        <div class="btn-group times options"></div>
+
+    </div>
+
+    <div class="optionbox" id="birthplace" style="display: none;">
+
+        <div class="btn-group nouns options"></div><br>
+        
+        <div class="btn-group verbs options"></div><br>  
+
+        <div class="btn-group names options"></div><br>
+
+        <div class="btn-group times options"></div>
+
+    </div>
+
+    <div class="optionbox" id="cause" style="display: none;">
+
+        <div class="btn-group nouns options"></div><br>
+        
+        <div class="btn-group verbs options"></div><br>  
+
+        <div class="btn-group names options"></div><br> 
+
+        <div class="btn-group times options"></div>
+
+    </div>
+
+    <div class="optionbox" id="courts" style="display: none;">
+
+        <div class="btn-group nouns options"></div><br>
+        
+        <div class="btn-group verbs options"></div><br>   
+
+        <div class="btn-group names options"></div><br>
+
+        <div class="btn-group times options"></div>
+
+    </div>
+
 </div>
 
 <div class="saveButton">
-    <input class="btn btn-primary" id="saveText" type="button" value="保存案件">
-    <input class="btn btn-primary" id="saveLabel" type="button" value="保存标注">
+    <input class="btn btn-primary" id="saveText" type="button" value="保 存 案 件">
+    <input class="btn btn-primary" id="saveLabel" type="button" value="保 存 标 注">
 </div>

@@ -36,7 +36,7 @@ def gen_nlp_result(segments, part_of_speech):
             noun.append(word)
         elif pos == 'v' and len(word) < 5 and word not in verb:
             verb.append(word)
-        elif pos == 'nh' and word not in name:
+        elif pos == 'nh' and len(word) < 10 and word not in name:
             name.append(word)
         elif pos == 'nt' and word not in time:
             time.append(word)
