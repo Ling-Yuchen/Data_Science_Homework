@@ -78,6 +78,25 @@
 </script>
 
 <style>
+    nav.top {
+        background-color: #fff;
+        padding-top: 5px;
+        padding-bottom: 5px;
+        border-bottom: 1px solid #e7e7e7;
+    }
+    nav.top a {
+        color: #999;
+        margin: 0px 25px 0px 30px;
+    }
+    nav.top span {
+        color: #999;
+        margin-left: 10px;
+    }
+    nav.top a:hover {
+        color: #646464;
+        text-decoration: none;
+        cursor: pointer;
+    }
     div.textareaDiv {
         padding-left: 220px;
         margin: 25px 0px;
@@ -243,19 +262,27 @@
     });
 </script>
 
-<div class="uploadDiv">
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <form action="uploadFile" method="post" enctype="multipart/form-data">
-        <input type="file" name="image" style="display: inline; width: 200px;">
-        <input class="btn btn-primary" type="submit" value="上  传">
-    </form>
-    <input class="btn btn-primary pull-right nlpButton" type="button" value="生 成 分 词 结 果">
-    <input class="btn btn-primary pull-right showText" type="button" value="显 示 文 件 内 容"><br>
-    
-</div>
+<nav class="top">
+    <span class="glyphicon glyphicon-pencil"><span style="font-size: 5px;">不太</span><b>智能的司法文书分析器</b></span>
+    <a href="https://github.com/Ling-Yuchen/Data_Science_Homework">查看项目源码</a>
+    <span class="pull-right">
+        <a href="https://github.com/Ling-Yuchen/Data_Science_Homework#readme"><span class=" glyphicon glyphicon-book" ></span>  使用方法说明</a>
+    </span>
+</nav>
 
-<div class="textareaDiv">
-    <textarea class="caseText form-control" placeholder="请输入案件信息..."></textarea>
+<div class="jumbotron">
+    <div class="uploadDiv">
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <form action="uploadFile" method="post" enctype="multipart/form-data">
+            <input type="file" name="image" style="display: inline; width: 200px;">
+            <input class="btn btn-primary" type="submit" value="上  传">
+        </form>
+        <input class="btn btn-primary pull-right nlpButton" type="button" value="生 成 分 词 结 果">
+        <input class="btn btn-primary pull-right showText" type="button" value="显 示 文 件 内 容"><br>
+    </div>
+    <div class="textareaDiv">
+        <textarea class="caseText form-control" placeholder="请输入案件信息..."></textarea>
+    </div>
 </div>
 
 <script>
