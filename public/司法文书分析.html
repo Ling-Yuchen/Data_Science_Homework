@@ -37,6 +37,7 @@
                 var box = optionbox[k];
                 for (var i = 0; i < box.children.length; ++i) {
                     if (box.children[i].nodeName == "BR") continue;
+                    removeAllChild(box.children[i]);
                     var tipSpan = document.createElement("span");
                     tipSpan.appendChild(document.createTextNode(tip[i]));
                     tipSpan.setAttribute("class", "glyphicon glyphicon-list posTip");
@@ -67,9 +68,24 @@
         }
     }; 
 
+    function removeAllChild(parentElement) {
+        var n = parentElement.childNodes.length;
+        for (var i = 0; i < n; ++i) {
+            parentElement.removeChild(parentElement.firstChild);
+        }
+    }
+
     $(function() {
         $(".uploadDiv input.nlpButton").click(function() {
-            ws.send($("textarea.caseText").val());
+            var rawText = new String($("textarea.caseText").val());
+            var processedText = "";
+            for (var i = 0; i < rawText.length; ++i) {
+                var c = rawText.charAt(i);
+                if (c != ' ' && c != '\n' && c != '\t' && c != '\r') {
+                    processedText += c;
+                }
+            }
+            ws.send(processedText);
         });
         $(".uploadDiv input.showText").click(function() {
             ws.send("@show");
