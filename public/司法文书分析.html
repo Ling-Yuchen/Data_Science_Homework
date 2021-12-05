@@ -1,11 +1,51 @@
 <!DOCTYPE html>
 
 <head>
+    <meta charset="utf-8">
+    <title>司法文书分析</title>
+    <meta name="description" content="particles.js is a lightweight JavaScript library for creating particles.">
+    <meta name="author" content="Vincent Garreau" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="stylesheet" media="screen" href="css/style.css">
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <script src="js/jquery/2.0.0/jquery.min.js"></script>
     <link href="css/bootstrap/3.3.6/bootstrap.min.css" rel="stylesheet">
     <script src="js/bootstrap/3.3.6/bootstrap.min.js"></script>
 </head>
+
+    <div class="count-particles">
+        <span class="js-count-particles">--</span> particles
+      </div>
+      
+      <!-- particles.js container -->
+      <div id="particles-js"></div>
+      
+      <!-- scripts -->
+      <script src="../particles.js"></script>
+      <script src="js/app.js"></script>
+      
+      <!-- stats.js -->
+      <script src="js/lib/stats.js"></script>
+      <script>
+        var count_particles, stats, update;
+        stats = new Stats;
+        stats.setMode(0);
+        stats.domElement.style.position = 'absolute';
+        stats.domElement.style.left = '0px';
+        stats.domElement.style.top = '0px';
+        document.body.appendChild(stats.domElement);
+        count_particles = document.querySelector('.js-count-particles');
+        update = function() {
+          stats.begin();
+          stats.end();
+          if (window.pJSDom[0].pJS.particles && window.pJSDom[0].pJS.particles.array) {
+            count_particles.innerText = window.pJSDom[0].pJS.particles.array.length;
+          }
+          requestAnimationFrame(update);
+        };
+        requestAnimationFrame(update);
+      </script>
+      
 
 <script type="text/javascript">
 
@@ -95,48 +135,61 @@
 
 <style>
     nav.top {
+        position: relative;
         background-color: #fff;
         padding-top: 5px;
         padding-bottom: 5px;
         border-bottom: 1px solid #e7e7e7;
     }
     nav.top a {
+        
+        position: relative;
         color: #999;
         margin: 0px 25px 0px 30px;
     }
     nav.top span {
+        
+        position: relative;
         color: #999;
         margin-left: 10px;
     }
     nav.top a:hover {
+        
+        position: relative;
         color: #646464;
         text-decoration: none;
         cursor: pointer;
     }
     div.textareaDiv {
+        position: relative;
         padding-left: 220px;
         margin: 25px 0px;
     }
     textarea.caseText {
+        position: relative;
         margin: 10px;
         padding: 15px 25px;
         height: 500px;
         width: 1000px;
     }
     div.infoDiv {
+        position: relative;
         margin-left: 230px;
         margin-bottom: 25px;
         width: 1000px;
     }
     div.saveButton {
+        position: relative;
         margin-top: 25px;
         margin-bottom: 20px;
         padding-left: 615px;
     }
     div.saveButton input#saveText {
+        position: relative;
         margin-right: 30px;
     }
     div.uploadDiv {
+        position: relative;
         width: 980px;
         margin-top: 25px;
         margin-bottom: 5px;
@@ -144,27 +197,33 @@
         /* border: 2px solid #000; */
     }
     div.uploadDiv form {
+        position: relative;
         float: left;
     }
     div.uploadDiv input.nlpButton {
+        position: relative;
         margin-left: 15px;
     }
     a {
+        position: relative;
         cursor: pointer;
         font-weight: bold;
         width: 100px;
         text-align: center;
     }
     div.options {
+        position: relative;
         padding: 5px 15px;
     }
     div.options label {
+        position: relative;
         width: 240px;
         text-align: center;
         margin-bottom: 5px;
         border-radius: 10px;
     }
     span.posTip {
+        position: relative;
         float: left;
         margin-bottom: 15px;
         margin-top: 20px;
@@ -277,7 +336,6 @@
         });
     });
 </script>
-
 <nav class="top">
     <span class="glyphicon glyphicon-pencil"><span style="font-size: 5px;">不太</span><b>智能的司法文书分析器</b></span>
     <a href="https://github.com/Ling-Yuchen/Data_Science_Homework">查看项目源码</a>
@@ -451,3 +509,5 @@
     <input class="btn btn-primary" id="saveText" type="button" value="保 存 案 件">
     <input class="btn btn-primary" id="saveLabel" type="button" value="保 存 标 注">
 </div>
+
+</body>
