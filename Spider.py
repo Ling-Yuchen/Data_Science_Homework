@@ -1,7 +1,5 @@
 from bs4 import BeautifulSoup
-import urllib.request
 import requests
-import urllib.error
 import re
 import xlwt
 
@@ -16,24 +14,20 @@ def askURL(url):
     headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) "
                              "Chrome/96.0.4664.55 Safari/537.36 Edg/96.0.1054.34"}
     html = ""
-    try:
-        response = session.get(url=url, headers=headers)
-        html = response.text
-        print(html)
-        # 打印结果
-        getData(html)
-    except urllib.error.URLError as e:
-        if hasattr(e, "code"):
-            print(e.code)
-        if hasattr(e, "reason"):
-            print(e.reason)
+    response = session.get(url=url, headers=headers)
+    html = response.text
+    print(html)
+    # 打印结果
+    getData(html)
 
 
 def getCookie():
+    # 查看网页源码的request headers得到的headers数据
     headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) "
                              "Chrome/96.0.4664.55 Safari/537.36 Edg/96.0.1054.34"}
     loginURL = "https://wenshu.court.gov.cn/website/wenshu/181010CARHS5BS3C/index.html?open=login"
     session = requests.Session()
+    # 查看登录时的login的request headers的form data得到的模拟登录的数据
     data = {"username": "17712912271",
             "password": "d0jaf6u7MmlSWzyOvUZxbmmViq09YdsTOJvX1rADH8afQv4OdWSSXkxtx7NGFvsRgEwK4kb"
                         "%2B8rJlb9MQxO8W7J3uTXsebuzo0iaKypMiPxpI2JcarnePg"
@@ -42,6 +36,7 @@ def getCookie():
                         "%2FsbaFndzbOWKf0JFuNlJMCa7uLdQmYFoXeBELPKQOsUe3LwYmuoBACDlRZELnNtUeBnu1wA5eS%2FN1DSvZwPYs8sw"
                         "%3D%3D",
             "appDomain": "wenshu.court.gov.cn"}
+    # 模拟进行登录，session自动保留的登录的cookie
     response = session.post(url=loginURL, headers=headers, data=data)
     return session
 

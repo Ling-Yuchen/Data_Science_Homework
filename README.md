@@ -8,7 +8,54 @@
 
 #### 网络爬虫
 
-###### @马宇森 有空写一下
+###### 基本需求：爬取100份中国裁判文书网的固定网址
+
+###### 进阶需求：实现自动化爬虫
+
+###### 实现方式：
+
+使用的库：requests,BeautifulSoup
+
+实现步骤：
+
+一.通过getCookie()方法，获得一个已经登陆过中国裁判文书网的session会话对象
+
+```python
+def getCookie():
+    # 查看网页源码的request headers得到的headers数据
+    headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) "
+                             "Chrome/96.0.4664.55 Safari/537.36 Edg/96.0.1054.34"}
+    loginURL = "https://wenshu.court.gov.cn/website/wenshu/181010CARHS5BS3C/index.html?open=login"
+    session = requests.Session()
+    # 查看登录时的login的request headers的form data得到的模拟登录的数据
+    data = {"username": "17712912271",
+            "password": "d0jaf6u7MmlSWzyOvUZxbmmViq09YdsTOJvX1rADH8afQv4OdWSSXkxtx7NGFvsRgEwK4kb"
+                        "%2B8rJlb9MQxO8W7J3uTXsebuzo0iaKypMiPxpI2JcarnePg"
+                        "%2BHYHxHemC4KrypFYmIrFIJGu699nnu2R7RN1lj1sR8to%2F1CsAqpbb5nAEhcj0s9PbPtsBT6d8qPAtkrqZ3eCcjlw"
+                        "%2FnPyrZRMpQMu8wnpe5S44ebNYrMHhLBM7EwzOJIiWkzMQWy6S"
+                        "%2FsbaFndzbOWKf0JFuNlJMCa7uLdQmYFoXeBELPKQOsUe3LwYmuoBACDlRZELnNtUeBnu1wA5eS%2FN1DSvZwPYs8sw"
+                        "%3D%3D",
+            "appDomain": "wenshu.court.gov.cn"}
+    # 模拟进行登录，session自动保留的登录的cookie
+    response = session.post(url=loginURL, headers=headers, data=data)
+    return session
+```
+
+
+
+二. 在得到session对象的基础上，爬取所需网址的数据
+
+```python
+session = getCookie()
+# 获得已经登录过的session
+headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) "
+                         "Chrome/96.0.4664.55 Safari/537.36 Edg/96.0.1054.34"}
+html = ""
+response = session.get(url=url, headers=headers)
+html = response.text
+```
+
+经检查对比发现，爬取到的数据和网页源码相比缺少了相当一部分。lyc说可能是没有爬取到网页动态加载的内容，问题正在解决中
 
 
 
