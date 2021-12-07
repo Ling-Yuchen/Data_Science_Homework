@@ -3,30 +3,26 @@
 <head>
     <meta charset="utf-8">
     <title>司法文书分析</title>
-    <meta name="description" content="particles.js is a lightweight JavaScript library for creating particles.">
-    <meta name="author" content="Vincent Garreau" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <link rel="stylesheet" media="screen" href="css/style.css">
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <script src="js/jquery/2.0.0/jquery.min.js"></script>
-    <link href="css/bootstrap/3.3.6/bootstrap.min.css" rel="stylesheet">
-    <script src="js/bootstrap/3.3.6/bootstrap.min.js"></script>
+    <link rel="stylesheet" media="screen" href="./css/style.css">
+    <link href="./css/bootstrap/3.3.6/bootstrap.min.css" rel="stylesheet">
 </head>
 
-    <div class="count-particles">
-        <span class="js-count-particles">--</span> particles
-      </div>
       
       <!-- particles.js container -->
       <div id="particles-js"></div>
       
       <!-- scripts -->
       <script src="../particles.js"></script>
-      <script src="js/app.js"></script>
-      
-      <!-- stats.js -->
-      <script src="js/lib/stats.js"></script>
-      <script>
+      <script src="./js/apps.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/particlesjs/2.0.2/particles.min.js"></script>
+
+<script type="text/javascript">
+/* particlesJS.load(@dom-id, @path-json, @callback (optional)); */
+particlesJS.load('particles-js', 'bilder/particlesjs-config.json', function() {
+  console.log('callback - particles.js config loaded');
+});
+</script>
+ <script>
         var count_particles, stats, update;
         stats = new Stats;
         stats.setMode(0);
@@ -136,7 +132,7 @@
 <style>
     nav.top {
         position: relative;
-        background-color: #fff;
+        background-color: rgb(27, 25, 25);
         padding-top: 5px;
         padding-bottom: 5px;
         border-bottom: 1px solid #e7e7e7;
@@ -144,7 +140,7 @@
     nav.top a {
         
         position: relative;
-        color: #999;
+        color: rgb(228, 215, 215);
         margin: 0px 25px 0px 30px;
     }
     nav.top span {
@@ -164,6 +160,8 @@
         position: relative;
         padding-left: 220px;
         margin: 25px 0px;
+       
+      
     }
     textarea.caseText {
         position: relative;
@@ -171,18 +169,23 @@
         padding: 15px 25px;
         height: 500px;
         width: 1000px;
+        color: rgb(255, 255, 255);
+        background-color: rgba(169, 169, 180, 0.938);
+        
     }
     div.infoDiv {
         position: relative;
         margin-left: 230px;
         margin-bottom: 25px;
         width: 1000px;
+        
     }
     div.saveButton {
         position: relative;
         margin-top: 25px;
         margin-bottom: 20px;
         padding-left: 615px;
+      
     }
     div.saveButton input#saveText {
         position: relative;
@@ -194,15 +197,18 @@
         margin-top: 25px;
         margin-bottom: 5px;
         margin-left: 240px;
+        color: ghostwhite;
         /* border: 2px solid #000; */
     }
     div.uploadDiv form {
         position: relative;
         float: left;
+        color: ghostwhite;
     }
     div.uploadDiv input.nlpButton {
         position: relative;
         margin-left: 15px;
+        color: ghostwhite;
     }
     a {
         position: relative;
@@ -354,8 +360,9 @@
         <input class="btn btn-primary pull-right nlpButton" type="button" value="生 成 分 词 结 果">
         <input class="btn btn-primary pull-right showText" type="button" value="显 示 文 件 内 容"><br>
     </div>
-    <div class="textareaDiv">
-        <textarea class="caseText form-control" placeholder="请输入案件信息..."></textarea>
+    <div class="textareaDiv" >
+        <textarea class="caseText form-control" placeholder="请输入案件信息..."> </textarea>
+        
     </div>
 </div>
 

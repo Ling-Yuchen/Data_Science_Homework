@@ -13,7 +13,7 @@ app.use(multer({ dest: path.join(__dirname, 'tmp') }).array('image'));
 const WebSockect = require('ws')
 const wss = new WebSockect.Server({port: 3000});
 console.log("setup server...");
- 
+
 //获取后缀名
 function getExtName(fileName){
     var index1 = fileName.lastIndexOf(".");
@@ -21,7 +21,7 @@ function getExtName(fileName){
     var extName = fileName.substring(index1+1,index2);
     return extName;
 }
- 
+
 app.post('/uploadFile', (req, res) => {
    //获取上传文件的后缀名
    var extName = getExtName(req.files[0].originalname);
@@ -94,4 +94,5 @@ wss.on('connection', (ws) => {
     });   
 });
   
+
 var server = app.listen(8088);
