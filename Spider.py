@@ -1,20 +1,47 @@
+import urllib.request
 from bs4 import BeautifulSoup
 import requests
+import execjs
+import json
+from selenium import webdriver
 import re
 import xlwt
 
 
 def main():
-    askURL("https://wenshu.court.gov.cn/website/wenshu/181107ANFZ0BXSK4/index.html?docId=cd85419230a14e80b39eadd800c976da")
+    askURL("https://wenshu.court.gov.cn/website/parse/rest.q4w")
 
 
 def askURL(url):
     session = getCookie()
     # 获得已经登录过的session
+    # headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) "
+    #                          "Chrome/96.0.4664.55 Safari/537.36 Edg/96.0.1054.34",
+    #            "Cookie": "UM_distinctid=17d7f9e6f07af6-08ba407efcc4df-a7d193d-144000-17d7f9e6f08ae9; "
+    #                      "SESSION=7a206c09-49c2-463b-9509-edccfda0a787",
+    #            "Referer": "https://wenshu.court.gov.cn/website/wenshu/181107ANFZ0BXSK4/index.html?docId"
+    #                       "=e94301637d2c49c5babdadf20106e2e9",
+    #            "Accept": "application/json, text/javascript, */*; q=0.01",
+    #            }
     headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) "
                              "Chrome/96.0.4664.55 Safari/537.36 Edg/96.0.1054.34"}
     html = ""
-    response = session.get(url=url, headers=headers)
+    # request = urllib.request.Request(url=url, headers=headers,  method='POST')
+    # response = urllib.request.urlopen(request)
+    # 通过ctx调用js文件的函数
+    with open('SpiderHelper.js', encoding='utf-8') as f:
+        code = f.read()
+    ctx = execjs.compile(code)
+
+    getCipherText = "cipher()".format()
+    cipherText = json.loads(ctx.eval(getCipherText))
+
+    getToken = "geneToken('{}')".format(24)
+    token = json.loads(ctx.eval(getToken))
+
+    data = {"ciphertext": cipherText, "__RequestVerificationToken": token}
+
+    response = session.post(url=url, headers=headers, data=data)
     html = response.text
     print(html)
     # 打印结果
