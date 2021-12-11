@@ -8,11 +8,11 @@
 
 #### 网络爬虫
 
-###### 基本需求：爬取100份中国裁判文书网的固定网址
+##### 基本需求：爬取100份中国裁判文书网的固定网址
 
-###### 进阶需求：实现自动化爬虫
+##### 进阶需求：实现自动化爬虫
 
-###### 实现方式：
+##### 实现方式：
 
 使用的库：requests,BeautifulSoup
 
@@ -55,7 +55,29 @@ response = session.get(url=url, headers=headers)
 html = response.text
 ```
 
-经检查对比发现，爬取到的数据和网页源码相比缺少了相当一部分。lyc说可能是没有爬取到网页动态加载的内容，问题正在解决中
+经检查对比发现，爬取到的数据和网页源码相比缺少了相当一部分。据考察，发现可能是没有爬取到网页动态加载的内容。
+
+具体解释见：[(16条消息) Python每日一练(15)-爬取网页中动态加载的数据_Amo Xiang的博客-CSDN博客_python如何爬取动态网页数据](https://blog.csdn.net/xw1680/article/details/105870220?ops_request_misc=&request_id=&biz_id=102&utm_term=python爬虫 网页动态加载&utm_medium=distribute.pc_search_result.none-task-blog-2~all~sobaiduweb~default-1-105870220.pc_search_es_clickV2&spm=1018.2226.3001.4187)
+
+通过网页的网络监视器，找到了真正发送文本内容的html请求和回复：rest.q4w
+
+然而，如果直接访问rest.q4w对应的url，并不能返回我们需要的结果。经检查，发现request缺少了data。这些data包括cipherText和requestVerificationToken，是为了反爬虫设置的。而且返回的内容也需要解密才能转化为正常的文字。
+
+
+
+三.解决加密的request data并翻译response的数据
+
+思路：我们在html的源码中，可以直接搜索cipherText和requestVerificationToken，找到这两个变量出现的位置，并且通过断点等观察是什么样的函数生成了这两个变量。找到函数后，将其复制粘贴到project中的SpiderHelper.js，并在python中通过import pyexecjs包来调用SpiderHelper文件中的函数即可生成这两个变量，加入到request当中。同理，也可以通过调用其中的函数来破解response返回的数据。
+
+参考：
+
+1.（具体步骤）[(16条消息) 反爬虫破解——裁判文书网_KevinDai007的博客-CSDN博客_裁判文书网反爬](https://blog.csdn.net/KevinDai007/article/details/113872464?ops_request_misc=&request_id=&biz_id=102&utm_term=反爬虫破解——裁判文书网&utm_medium=distribute.pc_search_result.none-task-blog-2~all~sobaiduweb~default-0-113872464.pc_search_es_clickV2&spm=1018.2226.3001.4187)
+
+2.（大致思路）[(16条消息) 裁判文书网爬虫_燥起来的小飞龙的博客-CSDN博客](https://blog.csdn.net/weixin_47891328/article/details/120026206?ops_request_misc=&request_id=&biz_id=&utm_medium=distribute.pc_search_result.none-task-blog-2~all~es_rank~default-1-120026206.pc_search_es_clickV2&utm_term=反爬虫破解——裁判文书网&spm=1018.2226.3001.4187)
+
+具体实现：
+
+努力ing~~
 
 
 
