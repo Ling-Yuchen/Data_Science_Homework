@@ -74,7 +74,7 @@ wss.on('connection', (ws) => {
         }
         else {
             console.log(`[SERVER] Received: ${message}`);
-            exec('py .\\TextNLP.py '+ message +' ', {encoding: "gbk"}, (error, stdout, stderr) => {
+            exec('python .\\TextNLP.py '+ message +' ', {encoding: "gbk"}, (error, stdout, stderr) => {
                 if(stdout.length > 1) {
                     var result = iconv.decode(stdout, "GBK");
                     console.log('python stdout:', result);
