@@ -304,6 +304,8 @@
         birthplace = birthplace.substring(0, birthplace.length-1);
         cause = cause.substring(0, cause.length-1);
         courts = courts.substring(0, courts.length-1);
+        if (ethnic == "") ethnic = "汉族";
+        if (!courts.endsWith("人民法院")) courts += "人民法院";
         return {
                 "当事人" : party,
                 "性别" : gender,
