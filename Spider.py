@@ -1,76 +1,70 @@
-import urllib.request
-from bs4 import BeautifulSoup
-import requests
-import execjs
-import json
 from selenium import webdriver
-import re
-import xlwt
+from selenium.webdriver.common.by import By
+from time import sleep
 
 
 def main():
-    askURL("https://wenshu.court.gov.cn/website/parse/rest.q4w")
+    spider('https://anli.court.gov.cn/static/web/index.html#/alk/list')
 
 
-def askURL(url):
-    session = getCookie()
-    # 获得已经登录过的session
-    # headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) "
-    #                          "Chrome/96.0.4664.55 Safari/537.36 Edg/96.0.1054.34",
-    #            "Cookie": "UM_distinctid=17d7f9e6f07af6-08ba407efcc4df-a7d193d-144000-17d7f9e6f08ae9; "
-    #                      "SESSION=7a206c09-49c2-463b-9509-edccfda0a787",
-    #            "Referer": "https://wenshu.court.gov.cn/website/wenshu/181107ANFZ0BXSK4/index.html?docId"
-    #                       "=e94301637d2c49c5babdadf20106e2e9",
-    #            "Accept": "application/json, text/javascript, */*; q=0.01",
-    #            }
-    headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) "
-                             "Chrome/96.0.4664.55 Safari/537.36 Edg/96.0.1054.34"}
-    html = ""
-    # request = urllib.request.Request(url=url, headers=headers,  method='POST')
-    # response = urllib.request.urlopen(request)
-    # 通过ctx调用js文件的函数
-    with open('SpiderHelper.js', encoding='utf-8') as f:
-        code = f.read()
-    ctx = execjs.compile(code)
+def spider(web):
+    # 创建 WebDriver 对象，指明使用chrome浏览器驱动
+    wd = webdriver.Chrome()
 
-    getCipherText = "cipher()".format()
-    cipherText = json.loads(ctx.eval(getCipherText))
+    # 调用WebDriver 对象的get方法 可以让浏览器打开指定网址
+    wd.get(web)
 
-    getToken = "geneToken('{}')".format(24)
-    token = json.loads(ctx.eval(getToken))
+    # 设置最大等待时长为 10秒
+    wd.implicitly_wait(10)
 
-    data = {"ciphertext": cipherText, "__RequestVerificationToken": token}
+    # 进入此页面的第一个case
+    wd.find_element(By.CSS_SELECTOR, 'body .ul_list li .li_h').click()
 
-    response = session.post(url=url, headers=headers, data=data)
-    html = response.text
-    print(html)
-    # 打印结果
-    getData(html)
+    # 从这一份开始爬取 爬取100份
+    for i in range(100):
+        wd = spiderByCase(wd, i + 1)
+
+    wd.quit()
 
 
-def getCookie():
-    # 查看网页源码的request headers得到的headers数据
-    headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) "
-                             "Chrome/96.0.4664.55 Safari/537.36 Edg/96.0.1054.34"}
-    loginURL = "https://wenshu.court.gov.cn/website/wenshu/181010CARHS5BS3C/index.html?open=login"
-    session = requests.Session()
-    # 查看登录时的login的request headers的form data得到的模拟登录的数据
-    data = {"username": "17712912271",
-            "password": "d0jaf6u7MmlSWzyOvUZxbmmViq09YdsTOJvX1rADH8afQv4OdWSSXkxtx7NGFvsRgEwK4kb"
-                        "%2B8rJlb9MQxO8W7J3uTXsebuzo0iaKypMiPxpI2JcarnePg"
-                        "%2BHYHxHemC4KrypFYmIrFIJGu699nnu2R7RN1lj1sR8to%2F1CsAqpbb5nAEhcj0s9PbPtsBT6d8qPAtkrqZ3eCcjlw"
-                        "%2FnPyrZRMpQMu8wnpe5S44ebNYrMHhLBM7EwzOJIiWkzMQWy6S"
-                        "%2FsbaFndzbOWKf0JFuNlJMCa7uLdQmYFoXeBELPKQOsUe3LwYmuoBACDlRZELnNtUeBnu1wA5eS%2FN1DSvZwPYs8sw"
-                        "%3D%3D",
-            "appDomain": "wenshu.court.gov.cn"}
-    # 模拟进行登录，session自动保留的登录的cookie
-    response = session.post(url=loginURL, headers=headers, data=data)
-    return session
+# 爬取这个页面上的案例，rank为这个案例的序号
+def spiderByCase(wd, rank):
+    # 等待页面刷新
+    sleep(1)
 
+    # 找到所有文本的内容
+    fullText = wd.find_elements(By.CSS_SELECTOR, '.caseDetailContent #content .text p')
 
-def getData(html):
-    bs = BeautifulSoup(html, "html.parser")
+    # 定位到“裁判结果”，并保存之后的第二个webElement, 用flag标识是否遇到了“裁判结果”
+    flag = 0
     content = ""
+    for paragraph in fullText:
+        # 遇到了裁判结果栏目
+        if paragraph.text == "裁判结果":
+            flag = 1
+        else:
+            # 刚刚遇到这个栏目 需要经过一个空隙
+            if flag == 1:
+                flag += 1
+            # 到达文本内容
+            elif flag == 2:
+                content = paragraph.text
+                break
+
+    write(content, rank)
+
+    # 进入上一篇
+    wd.find_element(By.CSS_SELECTOR, 'body .prev').click()
+
+    return wd
+
+
+# 将content写入txt
+def write(content, rank):
+    path = 'res/' + str(rank) + '.txt'
+    f = open(path, 'w', encoding='utf-8')
+    f.write(content)
+    f.close()
 
 
 if __name__ == '__main__':
